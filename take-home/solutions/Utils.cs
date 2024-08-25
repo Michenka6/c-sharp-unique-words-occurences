@@ -21,5 +21,6 @@ public static class Utils
         NAIVE_TRIE_SOLUTION,
         NAIVE_TRIE_DICTIONARY_SOLUTION,
         ARRAY_TRIE_SOLUTION,
+        ARRAY_TRIE_STRUCT_SOLUTION,
     }
 }

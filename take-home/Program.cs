@@ -11,6 +11,7 @@ public class Program
         RunSolution(Utils.SolutionType.NAIVE_TRIE_SOLUTION, filePath);
         RunSolution(Utils.SolutionType.NAIVE_TRIE_DICTIONARY_SOLUTION, filePath);
         RunSolution(Utils.SolutionType.ARRAY_TRIE_SOLUTION, filePath);
+        RunSolution(Utils.SolutionType.ARRAY_TRIE_STRUCT_SOLUTION, filePath);
         
         // var summary = BenchmarkRunner.Run<MyBenchmarks>();
     }
@@ -46,8 +47,13 @@ public class Program
                 outFilePath = "./occurence-tables/04-solution.json";
                 message = "ArrayTrie solution took";
                 break;
+            case Utils.SolutionType.ARRAY_TRIE_STRUCT_SOLUTION:
+                solution = new ArrayTrieStructSolution();
+                outFilePath = "./occurence-tables/05-solution.json";
+                message = "ArrayTrieStruct solution took";
+                break;
             default:
-                Environment.Exit(69420);
+                Environment.Exit(-1);
                 break;
         }
         

@@ -1,23 +1,19 @@
 ﻿using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
+using System.Management;
 
 namespace take_home.solutions;
 
-public class ArrayTrieSolution : Solution
+public class ArrayTrieStructSolution : Solution
 {
-    private ArrayTrieNode[] _nodes;
+    private ArrayTrieStructNode[] _nodes;
     private int _length;
-    
-    public ArrayTrieSolution()
+
+    public ArrayTrieStructSolution()
     {
-        _nodes =  new ArrayTrieNode[Utils.MAX_TRIE_NODES];
-        for (var i = 0; i < Utils.MAX_TRIE_NODES; i += 1)
-        {
-            _nodes[i] = new ArrayTrieNode();
-        }
+        _nodes = new ArrayTrieStructNode[Utils.MAX_TRIE_NODES];
         Reset();
     }
-
+    
     public override void Solve(Input input)
     {
         foreach (var word in input.Words)
@@ -26,36 +22,24 @@ public class ArrayTrieSolution : Solution
         }
     }
     
-    public override void Reset()
-    {
-        for (var i = 0; i < Utils.MAX_TRIE_NODES; i += 1)
-        {
-            _nodes[i].Reset();
-        }
-        _length = 1;
-    }
-    
     private void AddWord(string word)
     {
         int trieIndex = 0;
-        var currentNode = _nodes[trieIndex];
 
         foreach (var c in word)
         {
             var index = Utils.CharToIndex(c);
 
-            if (currentNode.HasChild(index))
+            if (_nodes[trieIndex].HasChild(index))
             {
-                trieIndex = currentNode.GetChildIndex(index);
+                trieIndex = _nodes[trieIndex].GetChildIndex(index);
             } else {
+                _nodes[trieIndex].SetChildIndex(index, _length);
                 trieIndex = _length;
-                currentNode.SetChildIndex(index, _length);
                 _length += 1;
             }
-            currentNode = _nodes[trieIndex];
         }
-
-        currentNode.Visit();
+        _nodes[trieIndex].Visit();
     }
     
     public override void GetWords(List<(string, int)> acc)
@@ -63,33 +47,42 @@ public class ArrayTrieSolution : Solution
         void dfs(int index, string buffer, List<(string, int)> acc)
         {
             if (index < 0 || index >= Utils.MAX_TRIE_NODES) { return; }
-            var node = _nodes[index];
                 
-            if (node.WasVisited())
+            if (_nodes[index].WasVisited())
             {
-                acc.Add((buffer, node.GetTimesVisited()));
+                acc.Add((buffer, _nodes[index].GetTimesVisited()));
             }
 
             for (var i = 0; i < 26; i += 1)
             {
-                dfs(node.GetChildIndex(i), $"{buffer}{Utils.IndexToChar(i)}", acc);
+                if (_nodes[index].GetChildIndex(i) == -1) { continue; }
+
+                dfs(_nodes[index].GetChildIndex(i), $"{buffer}{Utils.IndexToChar(i)}", acc);
             }
         }
         dfs(0, "", acc);
     }
+    
+    public override void Reset()
+    {
+        for (var i = 0; i < Utils.MAX_TRIE_NODES; i += 1)
+        {
+            _nodes[i].InitChildren();
+            _nodes[i].Reset();
+        }
+        _length = 1;
+    }
 }
 
-internal class ArrayTrieNode
+internal struct ArrayTrieStructNode
 {
     private int[] _children;
     private int _timesVisited;
 
-    public ArrayTrieNode()
+    public void InitChildren()
     {
         _children = new int[26];
-        this.Reset();
     }
-
     public void Reset()
     {
         for (var i = 0; i < 26; i += 1)
@@ -98,7 +91,7 @@ internal class ArrayTrieNode
         }
         _timesVisited = 0;
     }
-
+    
     public bool HasChild(int index)
     {
         return _children[index] >= 0;
@@ -115,7 +108,7 @@ internal class ArrayTrieNode
 
     public void Visit()
     {
-        _timesVisited+= 1;
+        _timesVisited += 1;
     }
 
     public bool WasVisited()
@@ -127,5 +120,10 @@ internal class ArrayTrieNode
     {
         return _timesVisited;
     }
+
+    public int[] GetChildren()
+    {
+       return _children;
+    }
+        
 }
- 
