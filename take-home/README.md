@@ -3,6 +3,11 @@
     $ cd take-home
     $ dotnet build
 ```
+The timing benchmarks below are made on the sherlock holms book, 
+but a different input can be provided by changing the filepath to a file in Program.cs
+
+Interesting observation, for different text files the patterns are not the same, 
+sometimes Dictionary is not even the second best option.
 
 ## Debug
 ```console

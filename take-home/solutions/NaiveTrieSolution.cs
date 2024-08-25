@@ -64,9 +64,9 @@ internal class NaiveTrie
     
     public void Reset()
     {
-            for (var i = 0; i < 26; i += 1)
-            {
-                _children[i] = null;
-            }
+        for (var i = 0; i < _children.Length; i++)
+        {
+            _children[i] = null;
+        }
     }
 }
